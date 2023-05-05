@@ -1,8 +1,18 @@
-from tkinter import *
+import customtkinter
 import json
+# from UI import UI_init, app
+# from logic import data_load
 import os
 
-root = Tk()
+
+
+customtkinter.set_appearance_mode("System")  # Modes: system (default), light, dark
+customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+
+app = customtkinter.CTk()
+app.geometry("620x390")
+app.title('3D_price')
+app.iconbitmap('icon.ico')
 
 def btn_click():
     mass = int(mass_input.get())
@@ -15,7 +25,7 @@ def btn_click():
     ratio = float(ratio_input.get())
 
     result = int(((mass / 1000 * price_fl) + (power / 1000 * price_energy * ((time_m / 60)+time_h)) + (((time_m / 60 + time_h)) * (price_printer/365/8))) * 3 * ratio)
-    result_output['text']=str(result)+' руб'
+    result_output.configure(text=str(result)+' руб')
 
     data = {
     "price_fl":price_fl,
@@ -49,88 +59,72 @@ def data_load():
     power_input.insert(0,data_dict.get('power'))
     ratio_input.insert(0,data_dict.get('ratio'))
 
+padx_label=(20,10)
+padx_entry=10
 
+frame = customtkinter.CTkFrame(master=app)
+frame.place(relx=0.05, rely=0.05, relheight=0.9, relwidth=0.9)
 
-root['bg'] = '#008080'
-root.title('3D_price')
-root.geometry('600x400')
+heading = customtkinter.CTkLabel(frame, text='Введите параметры:',font=customtkinter.CTkFont(size=20, weight="bold"),justify=customtkinter.CENTER)
+heading.grid(column=0, row=0,pady=(15,15),columnspan=2)
 
-root.resizable(width=False, height=False)
+mass_title = customtkinter.CTkLabel(frame, text='Вес модели, гр',font=customtkinter.CTkFont(size=16, weight="normal"))
+mass_title.grid(column=0, row=1,sticky='w',padx=padx_label)
 
-canvas = Canvas(root, height=400, width=600)
+mass_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+mass_input.grid(ipadx=70,columnspan=2,column=1, row=1,padx=(2,padx_entry))
 
-frame = Frame(root, bg='#008080')
-frame.place(relx=0.1, rely=0.1, relheight=0.8, relwidth=0.8)
+time_title = customtkinter.CTkLabel(frame, text='Время печати',font=customtkinter.CTkFont(size=16, weight="normal"))
+time_title.grid(column=0, row=2,sticky='w',padx=padx_label)
 
-heading = Label(frame, text='Введите параметры:',
-                bg='#008080', font='Times 20')
-heading.grid(column=0, row=0)
+time_input=customtkinter.CTkFrame(master=frame)
+time_input.grid(column=1, row=2)
 
-mass_title = Label(frame, text='Вес модели, гр',
-                   bg='#008080', font='Times 14')
-mass_title.grid(column=0, row=1,sticky='w')
+time_h_input=customtkinter.CTkEntry(time_input,justify=customtkinter.CENTER,placeholder_text='часов')
+time_h_input.grid(column=0, row=0)
 
-mass_input=Entry(frame,justify='center')
-mass_input.grid(ipadx=63,columnspan=2,column=1, row=1,sticky='e')
+time_m_input=customtkinter.CTkEntry(time_input,justify=customtkinter.CENTER,placeholder_text='минут')
+time_m_input.grid(column=1, row=0)
 
-time_title = Label(frame, text='Время печати',
-                   bg='#008080', font='Times 14')
-time_title.grid(column=0, row=2,sticky='w')
+price_fl_title = customtkinter.CTkLabel(frame, text='Цена пластика, руб/кг',font=customtkinter.CTkFont(size=16, weight="normal"))
+price_fl_title.grid(column=0, row=3,sticky='w',padx=padx_label)
 
-time_h_input=Entry(frame,justify='center',text='часов')
-time_h_input.grid(column=1, row=2,sticky='e')
-time_h_input.insert(0,'часов')
+price_fl_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+price_fl_input.grid(ipadx=70,columnspan=2,column=1, row=3,padx=(2,padx_entry))
 
-time_m_input=Entry(frame,justify='center',text='минут')
-time_m_input.grid(column=2, row=2,sticky='e')
-time_m_input.insert(0,'минут')
+price_energy_title = customtkinter.CTkLabel(frame, text='Цена электроэнергии, руб/час',font=customtkinter.CTkFont(size=16, weight="normal"))
+price_energy_title.grid(column=0, row=4,sticky='w',padx=padx_label)
 
-price_fl_title = Label(frame, text='Цена пластика, руб/кг',
-                       bg='#008080', font='Times 14')
-price_fl_title.grid(column=0, row=3,sticky='w')
+price_energy_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+price_energy_input.grid(ipadx=70,columnspan=2,column=1, row=4,padx=(2,padx_entry))
 
-price_fl_input=Entry(frame,justify='center')
-price_fl_input.grid(ipadx=63,columnspan=2,column=1, row=3,sticky='e')
+price_printer_title = customtkinter.CTkLabel(frame, text='Цена 3D принтера, руб',font=customtkinter.CTkFont(size=16, weight="normal"))
+price_printer_title.grid(column=0, row=5,sticky='w',padx=padx_label)
 
-price_energy_title = Label(frame, text='Цена электроэнергии, руб/час',
-                           bg='#008080', font='Times 14')
-price_energy_title.grid(column=0, row=4,sticky='w')
+price_printer_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+price_printer_input.grid(ipadx=70,columnspan=2,column=1, row=5,padx=(0,padx_entry))
 
-price_energy_input=Entry(frame,justify='center')
-price_energy_input.grid(ipadx=63,columnspan=2,column=1, row=4,sticky='e')
+power_title = customtkinter.CTkLabel(frame, text='Мощность принтера, Вт',font=customtkinter.CTkFont(size=16, weight="normal"))
+power_title.grid(column=0, row=6,sticky='w',padx=padx_label)
 
-price_printer_title = Label(frame, text='Цена 3D принтера, руб',
-                            bg='#008080', font='Times 14')
-price_printer_title.grid(column=0, row=5,sticky='w')
+power_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+power_input.grid(ipadx=70,columnspan=2,column=1, row=6,padx=(2,padx_entry))
 
-price_printer_input=Entry(frame,justify='center')
-price_printer_input.grid(ipadx=63,columnspan=2,column=1, row=5,sticky='e')
+ratio_title = customtkinter.CTkLabel(frame, text='Коэффициент сложности',font=customtkinter.CTkFont(size=16, weight="normal"))
+ratio_title.grid(column=0, row=7,sticky='w',padx=padx_label)
 
-power_title = Label(frame, text='Мощность принтера, Вт',
-                    bg='#008080', font='Times 14')
-power_title.grid(column=0, row=6,sticky='w')
+ratio_input=customtkinter.CTkEntry(frame,justify=customtkinter.CENTER)
+ratio_input.grid(ipadx=70,columnspan=2,column=1, row=7,padx=(2,padx_entry))
 
-power_input=Entry(frame,justify='center')
-power_input.grid(ipadx=63,columnspan=2,column=1, row=6,sticky='e')
+result_title = customtkinter.CTkLabel(frame, text='Итоговая цена:',font=customtkinter.CTkFont(size=16, weight="normal"))
+result_title.grid(column=0, row=8,sticky='w',padx=padx_label)
 
-ratio_title = Label(frame, text='Коэффициент сложности',
-                    bg='#008080', font='Times 14')
-ratio_title.grid(column=0, row=7,sticky='w')
+result_output=customtkinter.CTkLabel(frame,justify=customtkinter.CENTER,text='0 руб',font=customtkinter.CTkFont(size=16, weight="bold"))
+result_output.grid(columnspan=2,column=1, row=8,padx=padx_label,pady=(10,0))
 
-ratio_input=Entry(frame,justify='center')
-ratio_input.grid(ipadx=63,columnspan=2,column=1, row=7,sticky='e')
-
-result_title = Label(frame, text='Итоговая цена:',
-                     bg='#008080', font='Times 14')
-result_title.grid(column=0, row=8,sticky='w')
-
-result_output=Label(frame,justify='left',bg='#008080',font='Times 14')
-result_output.grid(columnspan=2,column=1, row=8,sticky='w')
-
-button = Button(frame, text='Рассчитать',
-                    bg='#007380', font='Times 14',command=btn_click)
-button.grid(column=0, row=9,sticky='w')
+button = customtkinter.CTkButton(frame, text='Рассчитать',command=btn_click,font=customtkinter.CTkFont(size=16, weight="bold"))
+button.grid(column=0, row=9,pady=(15,15),columnspan=2)
 
 data_load()
 
-root.mainloop()
+app.mainloop()
